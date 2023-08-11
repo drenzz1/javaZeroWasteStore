@@ -4,7 +4,7 @@ import {ProductService} from "../../service/product.service";
 
 @Component({
   selector: 'app-product-list',
-  templateUrl: './product-list.component.html',
+  templateUrl: './product-list-grid.component.html',
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit{
@@ -17,6 +17,10 @@ export class ProductListComponent implements OnInit{
 
   }
   listProducts(){
-    this.productService.getProductList()
+    this.productService.getProductList().subscribe(
+      data=>{
+        this.products=data;
+      }
+    )
   }
 }
