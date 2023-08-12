@@ -7,9 +7,9 @@ import {Product} from "../common/product";
   providedIn: 'root'
 })
 export class ProductService {
-  private baseUrl='http://localhost:8080/api/products'; // url e springut
+  private baseUrl='http://localhost:8080/api/products?'; // url e springut
   constructor(private httpClient:HttpClient) { }
-  getProductList():Observable<Product[]>{
+  getProductList(theCategoryId:number ):Observable<Product[]>{
     return this.httpClient.get<GetResponse>(this.baseUrl).pipe(
       map(response=>response._embedded.products)
     );
