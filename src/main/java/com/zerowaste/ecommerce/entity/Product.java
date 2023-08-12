@@ -35,6 +35,7 @@ public class Product {
     private BigDecimal unitPrice ;
 
     @Column(name = "image_url")
+
     private String imageUrl ;
 
     @Column(name = "active")
