@@ -15,7 +15,9 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
         HttpMethod[]theUnsupoortedActions={HttpMethod.PUT,HttpMethod.POST,HttpMethod.DELETE};
         //mos me mujt me i perdor PUT POST DELETE PER PRODUKTE
 
-        config.getExposureConfiguration().forDomainType(Product.class).withItemExposure(((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions)))
+        config.getExposureConfiguration()
+                .forDomainType(Product.class)
+                .withItemExposure(((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions)))
                 .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions));
 
         //mos me mujt me i perdor PUT POST DELETE PER PRODUKT_category
