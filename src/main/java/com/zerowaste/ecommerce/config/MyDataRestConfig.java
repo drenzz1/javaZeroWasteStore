@@ -1,12 +1,15 @@
 package com.zerowaste.ecommerce.config;
 
+import com.zerowaste.ecommerce.entity.Country;
 import com.zerowaste.ecommerce.entity.Product;
 import com.zerowaste.ecommerce.entity.ProductCategory;
+import com.zerowaste.ecommerce.entity.State;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
+import org.springframework.data.rest.core.mapping.ExposureConfigurer;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -29,19 +32,31 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
         HttpMethod[]theUnsupoortedActions={HttpMethod.PUT,HttpMethod.POST,HttpMethod.DELETE};
         //mos me mujt me i perdor PUT POST DELETE PER PRODUKTE
 
-        config.getExposureConfiguration()
-                .forDomainType(Product.class)
-                .withItemExposure(((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions)))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions));
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(Product.class), theUnsupoortedActions);
 
         //mos me mujt me i perdor PUT POST DELETE PER PRODUKT_category
-        config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class)
-                .withItemExposure(((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions)))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions));
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(ProductCategory.class), theUnsupoortedActions);
 
+
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(ProductCategory.class), theUnsupoortedActions);
+
+
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(Country.class), theUnsupoortedActions);
+
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(State.class), theUnsupoortedActions);
         // qe me i shfaq id e merr prej qesaj metodes posht
         exposeIds(config);
+    }
+
+    private static void disableHttpMethods(ExposureConfigurer config, HttpMethod[] theUnsupoortedActions) {
+        config
+                .withItemExposure(((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions)))
+                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions));
     }
 
     private void exposeIds(RepositoryRestConfiguration config) {

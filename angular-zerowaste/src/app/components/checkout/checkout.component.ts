@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Form, FormBuilder, FormGroup} from "@angular/forms";
+import {Form, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ZerowasteFormService} from "../../service/zerowaste-form.service";
 import {Country} from "../../common/country";
 import {State} from "../../common/state";
+import {ZeroWasteValidators} from "../../validators/zero-waste-validators";
+import {CartService} from "../../service/cart.service";
 
 @Component({
   selector: 'app-checkout',
@@ -28,7 +30,7 @@ export class CheckoutComponent implements OnInit{
 
   // qita posht chat gpt se kshtu se di pse me bo qashtu
 
-  constructor(private formBuilder: FormBuilder,private zeroWasteService:ZerowasteFormService) {
+  constructor(private formBuilder: FormBuilder,private zeroWasteService:ZerowasteFormService,private cartService:CartService) {
     this.checkoutFormGroup = this.formBuilder.group({
       customer: this.formBuilder.group({
         firstName: [''],
@@ -39,34 +41,37 @@ export class CheckoutComponent implements OnInit{
   }
 
   ngOnInit():void {
+
+    this.reviewCartDetails();
+
     this.checkoutFormGroup=this.formBuilder.group({
       customer:this.formBuilder.group({
-        firstName:[''],
-        lastName:[''],
-        email:['']
+        firstName:new FormControl('',[Validators.required,Validators.minLength(2),ZeroWasteValidators.notOnlyWhitespace]),
+        lastName:new FormControl('',[Validators.required,Validators.minLength(2),ZeroWasteValidators.notOnlyWhitespace]),
+        email:new FormControl('',[Validators.required,Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),ZeroWasteValidators.notOnlyWhitespace])
       }),
       shippingAddress:this.formBuilder.group({
-        country:[''],
-        street:[''],
-        city:[''],
-        state:[''],
-        zipCode:[''],
+        country:new FormControl('',[Validators.required]),
+        street:new FormControl('',[Validators.required,Validators.minLength(2),ZeroWasteValidators.notOnlyWhitespace]),
+        city:new FormControl('',[Validators.required,Validators.minLength(2),ZeroWasteValidators.notOnlyWhitespace]),
+        state:new FormControl('',[Validators.required]),
+        zipCode:new FormControl('',[Validators.required,Validators.minLength(2),ZeroWasteValidators.notOnlyWhitespace])
 
       }),
       billingAddress:this.formBuilder.group({
-        country:[''],
-        street:[''],
-        city:[''],
-        state:[''],
-        zipCode:[''],
+        country:new FormControl('',[Validators.required]),
+        street:new FormControl('',[Validators.required,Validators.minLength(2),ZeroWasteValidators.notOnlyWhitespace]),
+        city:new FormControl('',[Validators.required,Validators.minLength(2),ZeroWasteValidators.notOnlyWhitespace]),
+        state:new FormControl('',[Validators.required]),
+        zipCode:new FormControl('',[Validators.required,Validators.minLength(2),ZeroWasteValidators.notOnlyWhitespace])
+
       }),
       creditCard:this.formBuilder.group({
-        cartType:[''],
-        nameOnCard:[''],
-        cardNumber:[''],
-        securityCode:[''],
-        expirationMonth:[''],
-        expirationYear:[''],
+        cartType: new FormControl('',[Validators.required]),
+        cardNumber: new FormControl('',[Validators.required,Validators.pattern('[0-9]{16}')]),
+        securityCode: new FormControl('',[Validators.required,Validators.pattern('[0-9]{3}')]),
+        expirationMonth:new FormControl('',[Validators.required]),
+        expirationYear:new FormControl('',[Validators.required]),
       })
     });
 
@@ -96,6 +101,11 @@ export class CheckoutComponent implements OnInit{
   }
   onSubmit(){
     console.log("Handling the submit button")
+
+    if (this.checkoutFormGroup.invalid){
+      this.checkoutFormGroup.markAsUntouched();
+    }
+
     console.log(this.checkoutFormGroup.get('customer')?.value);
     console.log("The email address is " + this.checkoutFormGroup.get('customer')?.value.email);
     console.log("The shipping address country is " + this.checkoutFormGroup.get('shippingAddress')?.value.country.name);
@@ -110,7 +120,65 @@ export class CheckoutComponent implements OnInit{
       this.checkoutFormGroup.controls['billingAddress'].reset();
     }
 
+
   }
+  get firstName(){
+    return this.checkoutFormGroup.get('customer.firstName');
+  }
+  get lastName(){
+    return this.checkoutFormGroup.get('customer.lastName');
+  }
+  get email(){
+    return this.checkoutFormGroup.get('customer.email');
+  }
+
+  get shippingAddressStreet(){
+    return this.checkoutFormGroup.get('shippingAddress.street');
+  }
+  get shippingAddressCity(){
+    return this.checkoutFormGroup.get('shippingAddress.city');
+  }
+  get shippingAddressState(){
+    return this.checkoutFormGroup.get('shippingAddress.state');
+  }
+  get shippingAddressZipCode(){
+    return this.checkoutFormGroup.get('shippingAddress.zipCode');
+  }
+  get shippingAddressCountry(){
+    return this.checkoutFormGroup.get('shippingAddress.country');
+  }
+  get billingAddressStreet(){
+    return this.checkoutFormGroup.get('billingAddress.street');
+  }
+  get billingAddressCity(){
+    return this.checkoutFormGroup.get('billingAddress.city');
+  }
+  get billingAddressState(){
+    return this.checkoutFormGroup.get('billingAddress.state');
+  }
+  get billingAddressZipCode(){
+    return this.checkoutFormGroup.get('billingAddress.zipCode');
+  }
+  get billingAddressCountry(){
+    return this.checkoutFormGroup.get('billingAddress.country');
+  }
+  get creditCardType(){
+    return this.checkoutFormGroup.get('creditCard.cardType');
+  }
+  get creditCardNumber(){
+    return this.checkoutFormGroup.get('creditCard.cardNumber');
+  }
+  get creditCardSecurityCode(){
+    return this.checkoutFormGroup.get('creditCard.securityCode');
+  }
+  get creditCardExpirationMonth(){
+    return this.checkoutFormGroup.get('creditCard.expirationMonth')
+  }
+  get creditCardExpirationYear(){
+    return this.checkoutFormGroup.get('creditCard.expirationYear')
+  }
+
+
   handleMonthsAndYears(){
     const creditCardFormGroup=this.checkoutFormGroup.get('creditCard');
 
@@ -158,4 +226,12 @@ export class CheckoutComponent implements OnInit{
   }
 
 
+   reviewCartDetails() {
+    this.cartService.totalQuantity.subscribe(
+      totalQuantity=>this.totalQuantity = totalQuantity
+    );
+    this.cartService.totalPrice.subscribe(
+      totalPrice=>this.totalPrice=totalPrice
+    );
+  }
 }
