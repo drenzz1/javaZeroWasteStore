@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {Form, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ZerowasteFormService} from "../../service/zerowaste-form.service";
 import {Country} from "../../common/country";
 import {State} from "../../common/state";
