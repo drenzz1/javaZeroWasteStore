@@ -3,6 +3,7 @@ package com.zerowaste.ecommerce.service;
 import com.zerowaste.ecommerce.api.CustomerRepository;
 import com.zerowaste.ecommerce.dto.Purchase;
 import com.zerowaste.ecommerce.dto.PurchaseResponse;
+import com.zerowaste.ecommerce.entity.Customer;
 import com.zerowaste.ecommerce.entity.OrderItem;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,13 @@ public class CheckoutSerivceImpl implements CheckoutSerivce{
         order.setBillingAddress(purchase.getBillingAddress());
         order.setShippingAddress(purchase.getShippingAddress());
         //e bon bashk customerin me porosin
-        var customer=purchase.getCustomer();
+        Customer customer=purchase.getCustomer();
+
+         String theEmail = customer.getEmail();
+         Customer customerFromDb = customerRepository.findByEmail(theEmail);
+         if (customerFromDb != null){
+             customer=customerFromDb;
+         }
         customer.add(order);
         //e run ndatabaz
         customerRepository.save(customer);
