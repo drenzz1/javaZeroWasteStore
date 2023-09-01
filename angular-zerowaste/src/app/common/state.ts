@@ -3,9 +3,9 @@ export class State {
   name:string;
 
 
-  constructor(id: number, name: string) {
-    this.id = id;
-    this.name = name;
+  constructor() {
+    this.id = 0;
+    this.name = '';
   }
 }
 
