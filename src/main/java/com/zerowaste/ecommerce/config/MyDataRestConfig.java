@@ -7,6 +7,7 @@ import com.zerowaste.ecommerce.entity.State;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.mapping.ExposureConfigurer;
@@ -21,6 +22,8 @@ import java.util.Set;
 @Configuration
 public class MyDataRestConfig implements RepositoryRestConfigurer {
 
+    @Value("${allowed.origins}")
+    private String [] theAllowedOrigins;
     private EntityManager entityManager;
 
     @Autowired
@@ -29,7 +32,7 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
     }
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-        HttpMethod[]theUnsupoortedActions={HttpMethod.PUT,HttpMethod.POST,HttpMethod.DELETE};
+        HttpMethod[]theUnsupoortedActions={HttpMethod.PUT,HttpMethod.POST,HttpMethod.DELETE,HttpMethod.PATCH};
         //mos me mujt me i perdor PUT POST DELETE PER PRODUKTE
 
         disableHttpMethods(config.getExposureConfiguration()
@@ -51,6 +54,8 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
                 .forDomainType(State.class), theUnsupoortedActions);
         // qe me i shfaq id e merr prej qesaj metodes posht
         exposeIds(config);
+
+        cors.addMapping(config.getBasePath()+"/**").allowedOrigins(theAllowedOrigins);
     }
 
     private static void disableHttpMethods(ExposureConfigurer config, HttpMethod[] theUnsupoortedActions) {
