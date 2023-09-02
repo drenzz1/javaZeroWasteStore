@@ -1,9 +1,6 @@
 package com.zerowaste.ecommerce.config;
 
-import com.zerowaste.ecommerce.entity.Country;
-import com.zerowaste.ecommerce.entity.Product;
-import com.zerowaste.ecommerce.entity.ProductCategory;
-import com.zerowaste.ecommerce.entity.State;
+import com.zerowaste.ecommerce.entity.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +39,14 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
         disableHttpMethods(config.getExposureConfiguration()
                 .forDomainType(ProductCategory.class), theUnsupoortedActions);
 
-
-        disableHttpMethods(config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class), theUnsupoortedActions);
-
-
         disableHttpMethods(config.getExposureConfiguration()
                 .forDomainType(Country.class), theUnsupoortedActions);
 
         disableHttpMethods(config.getExposureConfiguration()
                 .forDomainType(State.class), theUnsupoortedActions);
+
+        disableHttpMethods(config.getExposureConfiguration()
+                .forDomainType(Order.class), theUnsupoortedActions);
         // qe me i shfaq id e merr prej qesaj metodes posht
         exposeIds(config);
 
