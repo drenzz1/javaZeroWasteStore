@@ -261,7 +261,7 @@
             <div class="col-md-1"><label>Card Type</label></div>
             <div class="col-md-9">
               <div class="input-space">
-                <select formControlName="cardType">
+                <select formControlName="cartType">
                   <option>Visa</option>
                   <option>MasterCard</option>
                 </select>
@@ -314,15 +314,11 @@
             <div class="col-md-1"><label>Expirtaion Month</label></div>
             <div class="col-md-9">
               <div class="input-space">
-                <select formControlName="expirtaionMonth">
+                <select formControlName="expirationMonth">
                   <option *ngFor="let month of creditCardMonths">{{month}}
                   </option>
                 </select>
-                <div *ngIf="creditCardExpirationMonth?.invalid && (creditCardExpirationMonth?.dirty||creditCardExpirationMonth?.touched)" class="alert alert-danger mt-1">
-                  <div *ngIf="creditCardExpirationMonth?.errors?.['required'] " >
-                    Credit Card Month is required
-                  </div>
-                </div>
+
               </div>
             </div>
           </div>
@@ -331,15 +327,10 @@
             <div class="col-md-1"><label>Expirtaion Year</label></div>
             <div class="col-md-9">
               <div class="input-space">
-                <select formControlName="expirtaionYear" (change)="handleMonthsAndYears()"><option *ngFor="let year of creditCardYears">
+                <select formControlName="expirationYear" (change)="handleMonthsAndYears()"><option *ngFor="let year of creditCardYears">
                   {{year}}
                 </option>
                 </select>
-                <div *ngIf="creditCardExpirationYear?.invalid && (creditCardExpirationYear?.dirty||creditCardExpirationYear?.touched)" class="alert alert-danger mt-1">
-                  <div *ngIf="creditCardExpirationYear?.errors?.['required'] " >
-                    Credit Card Year is required
-                  </div>
-                </div>
               </div>
             </div>
           </div>
