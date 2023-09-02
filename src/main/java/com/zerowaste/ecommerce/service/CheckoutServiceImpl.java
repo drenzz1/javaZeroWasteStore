@@ -4,52 +4,67 @@ import com.zerowaste.ecommerce.api.CustomerRepository;
 import com.zerowaste.ecommerce.dto.Purchase;
 import com.zerowaste.ecommerce.dto.PurchaseResponse;
 import com.zerowaste.ecommerce.entity.Customer;
+import com.zerowaste.ecommerce.entity.Order;
 import com.zerowaste.ecommerce.entity.OrderItem;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Set;
 import java.util.UUID;
 
 @Service
-public class CheckoutSerivceImpl implements CheckoutSerivce{
+public class CheckoutServiceImpl implements CheckoutService {
 
     private CustomerRepository customerRepository;
 
-    public CheckoutSerivceImpl(CustomerRepository customerRepository){
-        this.customerRepository=customerRepository;
+    public CheckoutServiceImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
     }
+
     @Override
     @Transactional
     public PurchaseResponse placeOrder(Purchase purchase) {
-        // i kthen te dhanat e porosis prej dto
-        var order=purchase.getOrder();
-        // e gjeneron ni tracking number
-        var orderTrackingNumber=generateOrderTrackingNumber();
+
+        // retrieve the order info from dto
+        Order order = purchase.getOrder();
+
+        // generate tracking number
+        String orderTrackingNumber = generateOrderTrackingNumber();
         order.setOrderTrackingNumber(orderTrackingNumber);
-        // shtin orderitems ne order
-        Set<OrderItem> orderItems=purchase.getOrderItems();
+
+        // populate order with orderItems
+        Set<OrderItem> orderItems = purchase.getOrderItems();
         orderItems.forEach(item -> order.add(item));
-        //e shkrun shipping edhe billingadreess
+
+        // populate order with billingAddress and shippingAddress
         order.setBillingAddress(purchase.getBillingAddress());
         order.setShippingAddress(purchase.getShippingAddress());
-        //e bon bashk customerin me porosin
-        Customer customer=purchase.getCustomer();
 
-         String theEmail = customer.getEmail();
-         Customer customerFromDb = customerRepository.findByEmail(theEmail);
-         if (customerFromDb != null){
-             customer=customerFromDb;
-         }
+        // populate customer with order
+        Customer customer = purchase.getCustomer();
         customer.add(order);
-        //e run ndatabaz
+
+        // save to the database
         customerRepository.save(customer);
 
+        // return a response
         return new PurchaseResponse(orderTrackingNumber);
     }
 
     private String generateOrderTrackingNumber() {
-        //e gjeneron ni random number te versionit(UUID)
+
+        // generate a random UUID number (UUID version-4)
+        // For details see: https://en.wikipedia.org/wiki/Universally_unique_identifier
+        //
         return UUID.randomUUID().toString();
     }
 }
+
+
+
+
+
+
+
+
+

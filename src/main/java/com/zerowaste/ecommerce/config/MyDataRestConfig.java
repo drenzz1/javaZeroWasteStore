@@ -1,17 +1,16 @@
 package com.zerowaste.ecommerce.config;
 
 import com.zerowaste.ecommerce.entity.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.metamodel.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
-import org.springframework.data.rest.core.mapping.ExposureConfigurer;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
+import javax.persistence.EntityManager;
+import javax.persistence.metamodel.EntityType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -20,55 +19,69 @@ import java.util.Set;
 public class MyDataRestConfig implements RepositoryRestConfigurer {
 
     @Value("${allowed.origins}")
-    private String [] theAllowedOrigins;
+    private String[] theAllowedOrigins;
+
     private EntityManager entityManager;
 
     @Autowired
-    public MyDataRestConfig(EntityManager theEntityManagaer){
-        entityManager=theEntityManagaer;
+    public MyDataRestConfig(EntityManager theEntityManager) {
+        entityManager = theEntityManager;
     }
-    @Override
+
+
+
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-        HttpMethod[]theUnsupoortedActions={HttpMethod.PUT,HttpMethod.POST,HttpMethod.DELETE,HttpMethod.PATCH};
-        //mos me mujt me i perdor PUT POST DELETE PER PRODUKTE
 
-        disableHttpMethods(config.getExposureConfiguration()
-                .forDomainType(Product.class), theUnsupoortedActions);
+        HttpMethod[] theUnsupportedActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PATCH};
 
-        //mos me mujt me i perdor PUT POST DELETE PER PRODUKT_category
-        disableHttpMethods(config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class), theUnsupoortedActions);
+        // disable HTTP methods for ProductCategory: PUT, POST and DELETE
+        disableHttpMethods(Product.class, config, theUnsupportedActions);
+        disableHttpMethods(ProductCategory.class, config, theUnsupportedActions);
+        disableHttpMethods(Country.class, config, theUnsupportedActions);
+        disableHttpMethods(State.class, config, theUnsupportedActions);
+        disableHttpMethods(Order.class, config, theUnsupportedActions);
 
-        disableHttpMethods(config.getExposureConfiguration()
-                .forDomainType(Country.class), theUnsupoortedActions);
-
-        disableHttpMethods(config.getExposureConfiguration()
-                .forDomainType(State.class), theUnsupoortedActions);
-
-        disableHttpMethods(config.getExposureConfiguration()
-                .forDomainType(Order.class), theUnsupoortedActions);
-        // qe me i shfaq id e merr prej qesaj metodes posht
+        // call an internal helper method
         exposeIds(config);
 
-        cors.addMapping(config.getBasePath()+"/**").allowedOrigins(theAllowedOrigins);
+        // configure cors mapping
+        cors.addMapping(config.getBasePath() + "/**").allowedOrigins(theAllowedOrigins);
     }
 
-    private static void disableHttpMethods(ExposureConfigurer config, HttpMethod[] theUnsupoortedActions) {
-        config
-                .withItemExposure(((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions)))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupoortedActions));
+    private void disableHttpMethods(Class theClass, RepositoryRestConfiguration config, HttpMethod[] theUnsupportedActions) {
+        config.getExposureConfiguration()
+                .forDomainType(theClass)
+                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
+                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
     }
 
     private void exposeIds(RepositoryRestConfiguration config) {
-        Set<jakarta.persistence.metamodel.EntityType<?>> entities = entityManager.getMetamodel().getEntities();
 
+        // expose entity ids
+        //
+
+        // - get a list of all entity classes from the entity manager
+        Set<EntityType<?>> entities = entityManager.getMetamodel().getEntities();
+
+        // - create an array of the entity types
         List<Class> entityClasses = new ArrayList<>();
 
-        for (EntityType tempEntityType: entities){
+        // - get the entity types for the entities
+        for (EntityType tempEntityType : entities) {
             entityClasses.add(tempEntityType.getJavaType());
         }
-        Class [] domainTypes = entityClasses.toArray(new Class[0]);
-        config.exposeIdsFor(domainTypes);
 
+        // - expose the entity ids for the array of entity/domain types
+        Class[] domainTypes = entityClasses.toArray(new Class[0]);
+        config.exposeIdsFor(domainTypes);
     }
 }
+
+
+
+
+
+
+
+
+
