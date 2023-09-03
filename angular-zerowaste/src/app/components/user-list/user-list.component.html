@@ -1,0 +1,57 @@
+<div class="main-content">
+    <div class="section-content section-content-p30">
+        <div class="container-fluid">
+<nav class="navbar navbar-expand-sm bg-primary navbar-dark">
+    <!-- Links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a routerLink="/employees" class="nav-link" routerLinkActive="active">Employee List</a>
+        </li>
+        <li class="nav-item">
+            <a routerLink="/add" class="nav-link" routerLinkActive="active">Add Employee</a>
+        </li>
+    </ul>
+</nav>
+
+
+<div class="container">
+    <br>
+    <h2 style="text-align: center;">My Page Title</h2>
+    <hr>
+    <div class="card">
+        <div class="card-body">
+
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let user of users | async">
+                    <td>{{user.first_name}}</td>
+                    <td>{{user.last_name}}</td>
+                    <td>{{user.email}}</td>
+                    <td><button (click)="deleteUser(user.id)" class="btn btn-danger">Delete</button>
+                        <button (click)="updateUser(user.id)" class="btn btn-info" style="margin-left: 10px">Update</button>
+                        <button (click)="userDetails(user.id)" class="btn btn-info" style="margin-left: 10px">Details</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <span>All Rights Reserved 2019 @JavaGuides</span>
+    </div>
+</footer>
+        </div>
+    </div>
+</div>

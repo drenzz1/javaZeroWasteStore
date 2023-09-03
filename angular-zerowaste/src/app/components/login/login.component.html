@@ -1,3 +1,32 @@
-<div class="pt-5">
-  <div id="okta-sign-in-widget" class="pt-5"></div>
+<div class="main-content">
+
+  <div class="section-content section-content-p30">
+    <div class="container-fluid">
+      <div class="row">
+        <div id="login-form-wrap">
+          <h2>Login</h2>
+          <form id="login-form">
+            <p>
+              <input type="text" id="username" name="username"  placeholder="Username"  [(ngModel)]="model.username" ><i class="validation"><span>
+
+            </span>
+              <span>
+
+              </span>
+            </i>
+            </p>
+            <p>
+              <input type="email" id="email" name="email" placeholder="Password"  [(ngModel)]="model.password" ><i class="validation"><span></span><span></span></i>
+            </p>
+            <p>
+              <input type="submit" id="login" value="Login" (click)="loginUser()">
+            </p>
+          </form>
+          <div id="create-account-wrap">
+            <p>Not a member? <a href="#">Create Account</a><p>
+          </div><!--create-account-wrap-->
+        </div><!--login-form-wrap-->
+      </div>
+    </div>
+  </div>
 </div>
